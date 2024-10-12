@@ -8,6 +8,9 @@ async def ai_generate_private(client, message):
         InlineKeyboardButton("Support", url="https://t.me/MRXSUPPORTS"),
         InlineKeyboardButton("Add me to your group", url="http://t.me/NezukoRobot?startgroup=true")  # Added a new button
     ]]
+    buttons = [[
+        InlineKeybordButton("Owner", url="http://t.me/UNNIdud")
+    ]]
     reply_markup = InlineKeyboardMarkup(buttons)
     # Updated message text
     await message.reply_text(

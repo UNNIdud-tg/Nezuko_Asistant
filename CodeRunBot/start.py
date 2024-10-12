@@ -5,13 +5,15 @@ from pyrogram import Client, filters , enums
 @Client.on_message(filters.command('start'))
 async def ai_generate_private(client, message):
     buttons = [[
-        InlineKeyboardButton("Support", url="https://t.me/MRXSUPPORTS")
+        InlineKeyboardButton("Support", url="https://t.me/MRXSUPPORTS"),
+        InlineKeyboardButton("Add me to your group", url="http://t.me/NezukoRobot?startgroup=true")  # Added a new button
     ]]
     reply_markup = InlineKeyboardMarkup(buttons)
-    # Fixed the misplaced parenthesis
+    # Updated message text
     await message.reply_text(
-        text=f"Hey {message.from_user.mention}\n 𝐇𝐞𝐲 𝐭𝐡𝐞𝐫𝐞! 𝐌𝐲 𝐧𝐚𝐦𝐞 𝐢𝐬 𝐕𝐞𝐠𝐞𝐭𝐚 - 𝐈'𝐦 𝐡𝐞𝐫𝐞 𝐭𝐨 𝐡𝐞𝐥𝐩 𝐲𝐨𝐮! \n\n 𝐩𝐫𝐨𝐯𝐢𝐝𝐞𝐝 𝐛𝐲 @MRXSUPPORTS", 
+        text=f"Hey {message.from_user.mention}\n Hey there! My name is Nezuko - I'm here to help you! Use /help to find out more about how to use me to my full potential.\n\nJoin my @MRXSUPPORTS to get information on all the latest updates.",
         reply_markup=reply_markup
+    )
     )
 
 @Client.on_message(filters.command("help"))

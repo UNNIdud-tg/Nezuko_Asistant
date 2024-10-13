@@ -51,7 +51,7 @@ async def getimg2pdf(client: Client, message: Message):
         await client.send_document(
             chat_id=message.chat.id,
             document=file_path,
-            caption=f"*By {client.me.username} ⚡*",
+            caption=f"*By @{client.me.username} ⚡*",
         )
         
         # Clear user image data after sending the PDF

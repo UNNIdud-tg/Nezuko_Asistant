@@ -15,12 +15,27 @@ async def ai_generate_private(client, message):
     
     reply_markup = InlineKeyboardMarkup(buttons)
     
-    # Using reply_photo to send an image with a caption
-    await message.reply_photo(
-        photo='https://mangandi-2-0.onrender.com/7EfZ.JPG',  # Replace with the actual image URL
-        caption=f"Hey {message.from_user.mention}\n Hey there! My name is Nezuko - I'm here to help you! Use /help to find out more about how to use me to my full potential.\n\nJoin my @MRXSUPPORTS to get information on all the latest updates.",
-        reply_markup=reply_markup
-    )
+    # Check if the bot is started in a private chat (DM)
+    if message.chat.type == enums.ChatType.PRIVATE:
+        # Message for DM (Private Chat)
+        await message.reply_photo(
+            photo='https://mangandi-2-0.onrender.com/7EfZ.JPG',  # Replace with an actual image URL if needed
+            caption="Hey there! My name is Nezuko - I'm here to help you! Use /help to find out more about how to use me to my full potential.\n\nJoin my @MRXSUPPORTS to get information on all the latest updates.",
+            reply_markup=reply_markup
+        )
+
+    # Check if the bot is started in a group or supergroup
+    elif message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+        # Message for Group Chat
+        await message.reply(
+            "Greetings! Nezuko here. Ready to explore and engage? Type /help for options. Let’s begin!",
+            reply_markup=reply_markup
+        )
+
+    # Sleep to avoid flood wait
+    await asyncio.sleep(2)
+    if not await db.get_chat(message.chat.id):
+        pass  # Handle this case if necessary
 
 @Client.on_message(filters.command("help"))
 async def help(client, message):

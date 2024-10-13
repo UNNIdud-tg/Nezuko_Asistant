@@ -18,7 +18,7 @@ AI_MODELS: dict = {
 
 
 
-@bot.on_message(filters.command(["gpt", "mistral", "claude", "meta"]))
+@Client.on_message(filters.command(["gpt", "mistral", "claude", "meta"]))
 async def _AiCmds(_, message):
      cmd = message.text.split()[0][1:].lower()
      model_id = AI_MODELS[cmd]

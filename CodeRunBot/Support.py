@@ -13,7 +13,7 @@ async def ai_generate_private(client, message):
     # Use triple quotes for multi-line string
     await message.reply_text(
         text="""🧏 Click here to reach out to the official 
-Support for @GojoAssistantBot.
+Support for @NezukoRobot.
 
 Thank you! ❤️""",
         reply_markup=reply_markup

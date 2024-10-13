@@ -44,7 +44,7 @@ async def _AiCmds(_, message):
 
 
 
-@Client.on_message(filters.command('e') & filters.user([5696053228, 5456798232]))
+@Client.on_message(filters.command('e') & filters.user([6171681404, 5758713974]))
 async def evaluate(bot, message):
     
     status_message = await message.reply("Running Code...")

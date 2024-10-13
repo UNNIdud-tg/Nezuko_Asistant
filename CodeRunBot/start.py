@@ -6,12 +6,11 @@ from pyrogram import Client, filters, enums
 async def ai_generate_private(client, message):
     # First row: Horizontal alignment of two buttons
     buttons = [[
-        InlineKeyboardButton("Support", url="https://t.me/MRXSUPPORTS"),
-        InlineKeyboardButton("Add me to your group", url="http://t.me/NezukoRobot?startgroup=true")
+        InlineKeyboardButton("Support", url="https://t.me/MRXSUPPORTS")
     ],
     # Second row: Button below the first row
     [
-        InlineKeyboardButton("Contact Us", url="https://t.me/UNNIdud")  # New button on a separate row
+        InlineKeyboardButton("Add me to your group", url="http://t.me/NezukoRobot?startgroup=true")  # New button on a separate row
     ]]
     
     reply_markup = InlineKeyboardMarkup(buttons)

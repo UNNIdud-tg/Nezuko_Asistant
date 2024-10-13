@@ -9,13 +9,13 @@ async def image_search(client, message):
         text = message.text.split(None, 1)[1] 
     except IndexError:
         return await message.reply_text(
-            "Provide me a query to search! like /image Nezuko"
+            "Provide me a query to search! like /img Nezuko"
         )  
     
     search_message = await message.reply_text("🔎 Searching for images...")
     
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://horrid-api.onrender.com/image_search?query={text}") as resp:
+        async with session.get(f"https://horridapi.onrender.com/image_search?query={text}") as resp:
             images = json.loads(await resp.text())  # Parse the response JSON into a list of image URLs
 
     media = []

@@ -1,5 +1,5 @@
 import logging, os, random
-from pyrogram import filters, enums, Client, version as pyro
+from pyrogram import Client, filters, enums,
 from pyrogram.types import *
 
 import requests

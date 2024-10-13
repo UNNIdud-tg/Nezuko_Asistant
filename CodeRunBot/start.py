@@ -15,8 +15,10 @@ async def ai_generate_private(client, message):
     
     reply_markup = InlineKeyboardMarkup(buttons)
     
-    await message.reply_text(
-        text=f"Hey {message.from_user.mention}\n Hey there! My name is Nezuko - I'm here to help you! Use /help to find out more about how to use me to my full potential.\n\nJoin my @MRXSUPPORTS to get information on all the latest updates.",
+    # Using reply_photo to send an image with a caption
+    await message.reply_photo(
+        photo='https://mangandi-2-0.onrender.com/7EfZ.JPG',  # Replace with the actual image URL
+        caption=f"Hey {message.from_user.mention}\n Hey there! My name is Nezuko - I'm here to help you! Use /help to find out more about how to use me to my full potential.\n\nJoin my @MRXSUPPORTS to get information on all the latest updates.",
         reply_markup=reply_markup
     )
 

@@ -132,7 +132,7 @@ async def chatbot_reply(client, message):
         user_id = id_generator()
         messages = [{"role": "user", "content": prompt}]
         response = await get_response(user_id, messages)
-        cleaned_response_text = response.replace('$v=undefined-rv1$@$(smirking)', '')
+        cleaned_response_text = response.replace('(smirking)', '')
         text = cleaned_response_text.strip()[2:]       
         await msg.edit_text(text)
 

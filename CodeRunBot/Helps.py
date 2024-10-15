@@ -32,21 +32,23 @@ async def ai_menu(client, callback_query):
     ]
     
     # AI Commands text
-    ai_commands_text = """
+    ai_commands_text = "⚡ Help for the module: AI"
+    
     ⚡ **Commands:**
 
-    `````
-    - /gpt4o <query>`: Get a response from GPT-4o Mini.
-    - /claude <query>`: Get a response from Claude 3 Haiku.
-    - /mistral <query>`: Get a response from Mistral AI.
-    - /meta <query>`: Get a response from Meta Llama.
-    - /draw <query>`: Generate an image from text (image generation).
-    - /imagine <query>`: Similar to draw, image generation from text.
-    - /art <query>`: Create art using text (image generation).
-    - /bdraw <query>`: Generate an image using blackbox model.
-    `````
+    <code>
+
+`````
+- /gpt4o <query>`: Get a response from GPT-4o Mini.
+- /claude <query>`: Get a response from Claude 3 Haiku.
+- /mistral <query>`: Get a response from Mistral AI.
+- /meta <query>`: Get a response from Meta Llama. 
+- /draw <query>`: Generate an image from text (image generation).
+- /imagine <query>`: Similar to draw, image generation from text.
+- /art <query>`: Create art using text (image generation).
+- /bdraw <query>`: Generate an image using blackbox model.
+`````
     """
-    
     # Image URL to display with the AI menu
     image_url = "https://mangandi-2-0.onrender.com/eLSn.JPG"  # Replace with actual image URL
 

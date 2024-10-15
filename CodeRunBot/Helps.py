@@ -35,7 +35,7 @@ async def ai_menu(client, callback_query):
     ai_commands_text = """
     ⚡ **Commands:**
 
-    `
+    `````
     - /gpt4o <query>`: Get a response from GPT-4o Mini.
     - /claude <query>`: Get a response from Claude 3 Haiku.
     - /mistral <query>`: Get a response from Mistral AI.
@@ -44,7 +44,7 @@ async def ai_menu(client, callback_query):
     - /imagine <query>`: Similar to draw, image generation from text.
     - /art <query>`: Create art using text (image generation).
     - /bdraw <query>`: Generate an image using blackbox model.
-    `
+    `````
     """
     
     # Image URL to display with the AI menu

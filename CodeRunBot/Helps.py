@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
 
 # Main menu with AI button
 @Client.on_message(filters.command("helps"))
@@ -10,10 +10,10 @@ async def start_menu(client, message):
     ]
     
     # Main menu text
-    main_menu_text = "⚡ Ready to explore? Click the button below to discover my commands!"
+    main_menu_text = "⚡ **Welcome to the bot!**\n\nPlease select an option below:"
     
     # Image URL to display with the main menu
-    image_url = "https://mangandi-2-0.onrender.com/eLSn.JPG"  # Replace with the actual image URL
+    image_url = "https://mangandi-2-0.onrender.com/eLSn.JPG"  # Replace with actual image URL
 
     # Send the main menu with the image
     await client.send_photo(
@@ -35,24 +35,29 @@ async def ai_menu(client, callback_query):
     ai_commands_text = """
     ⚡ **Commands:**
 
-    - `/gpt4o <query>`: Get a response from GPT-4o Mini.
-    - `/Claude <query>`: Get a response from Claude 3 Haiku.
-    - `/mistral <query>`: Get a response from Mistral AI.
-    - `/meta <query>`: Get a response from Meta Llama.
-    - `/draw <query>`: Generate an image from text (image generation).
-    - `/imagine <query>`: Similar to draw, image generation from text.
-    - `/art <query>`: Create art using text (image generation).
-    - `/bdraw <query>`: Generate an image using blackbox model.
+    `
+    - /gpt4o <query>`: Get a response from GPT-4o Mini.
+    - /claude <query>`: Get a response from Claude 3 Haiku.
+    - /mistral <query>`: Get a response from Mistral AI.
+    - /meta <query>`: Get a response from Meta Llama.
+    - /draw <query>`: Generate an image from text (image generation).
+    - /imagine <query>`: Similar to draw, image generation from text.
+    - /art <query>`: Create art using text (image generation).
+    - /bdraw <query>`: Generate an image using blackbox model.
+    `
     """
     
     # Image URL to display with the AI menu
     image_url = "https://mangandi-2-0.onrender.com/eLSn.JPG"  # Replace with actual image URL
 
-    # Send AI commands with the image and buttons
-    await client.send_photo(
+    # Edit the existing message to show the AI menu with the image and buttons
+    await client.edit_message_media(
         chat_id=callback_query.message.chat.id,
-        photo=image_url,
-        caption=ai_commands_text,
+        message_id=callback_query.message.id,
+        media=InputMediaPhoto(
+            media=image_url,
+            caption=ai_commands_text
+        ),
         reply_markup=InlineKeyboardMarkup(buttons)
     )
     await callback_query.answer()
@@ -72,10 +77,13 @@ async def back_to_main_menu(client, callback_query):
     image_url = "https://mangandi-2-0.onrender.com/eLSn.JPG"  # Same or different image URL
 
     # Edit the message to show the main menu with the image
-    await client.send_photo(
+    await client.edit_message_media(
         chat_id=callback_query.message.chat.id,
-        photo=image_url,
-        caption=main_menu_text,
+        message_id=callback_query.message.id,
+        media=InputMediaPhoto(
+            media=image_url,
+            caption=main_menu_text
+        ),
         reply_markup=InlineKeyboardMarkup(buttons)
     )
     await callback_query.answer()

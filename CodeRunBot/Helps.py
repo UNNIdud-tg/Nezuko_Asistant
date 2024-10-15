@@ -32,9 +32,9 @@ async def ai_menu(client, callback_query):
     ]
     
     # AI Commands text
-    ai_commands_text = "⚡ Help for the module: AI"
+    ai_commands_text = "⚡ Help for the module: AI""""""
     
-    ⚡ **Commands:**
+     **Commands:**
 
     <code>
 

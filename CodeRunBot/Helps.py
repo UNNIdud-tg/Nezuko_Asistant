@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
 
 # Main menu with AI button
-@Client.on_message(filters.command("helps"))
+@Client.on_message(filters.command("help"))
 async def start_menu(client, message):
     # Main menu buttons with AI button
     buttons = [
@@ -32,12 +32,10 @@ async def ai_menu(client, callback_query):
     ]
     
     # AI Commands text
-    ai_commands_text = "⚡ Help for the module: AI""""""
+    ai_commands_text = "⚡ **Help for the module: AI**""""""
     
      **Commands:**
-
-    <code>
-
+<code>
 `````
 - /gpt4o <query>`: Get a response from GPT-4o Mini.
 - /claude <query>`: Get a response from Claude 3 Haiku.

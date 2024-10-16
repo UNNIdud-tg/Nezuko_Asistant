@@ -17,7 +17,9 @@ say_welcome = [
     'Hey {} is Back!',
     'Whats up {}!, are you done?',
     '{} is back online',
-    'yeahh {} has returned!'
+    'yeahh {} has returned!',
+    '{} pro is back',
+    '{} come again to make trouble'
 ]
 
 # Function to get current datetime
@@ -37,15 +39,7 @@ OWNER_ID = 6171681404  # Replace with the actual owner ID
 # Client instance of the bot
 app = Client('your_bot')
 
-@Client.on_message(filters.me, group=2)
-async def back_to_online(_, message):
-    global AFK
-    if AFK['afk']:
-        AFK['afk'] = False
-        name = message.from_user.mention
-        await message.reply(random.choice(say_welcome).format(name))
-
-@Client.on_message(filters.me & filters.command('afk', prefixes=PREFIXES), group=1)
+@Client.on_message(filters.command('afk', prefixes=PREFIXES), group=1)
 async def away_from_keyboard(_, message):
     global AFK
 
@@ -62,7 +56,7 @@ async def away_from_keyboard(_, message):
 
     await message.reply(random.choice(say_afk).format(mention))
 
-@Client.on_message(filters.reply & ~filters.me & ~filters.bot, group=-1)
+@Client.on_message(filters.reply & ~filters.bot, group=-1)
 async def afk_check(_, message):
     r = message.reply_to_message
     IS_AFK = AFK['afk']
@@ -78,3 +72,13 @@ async def afk_check(_, message):
             text += f'\nSince: {datetime}'
         url = await get_anime_gif("anime_gif_key")
         await message.reply_animation(animation=url, caption=text, quote=True)
+
+@Client.on_message(filters.text, group=2)  # Respond to all text messages
+async def back_to_online(_, message):
+    global AFK
+    if AFK['afk'] and message.from_user.id == OWNER_ID:
+        AFK['afk'] = False
+        name = message.from_user.mention
+        await message.reply(random.choice(say_welcome).format(name))
+
+app.run()

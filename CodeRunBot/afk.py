@@ -1,5 +1,5 @@
 import random
-from pyrogram import Client as app, filters, errors
+from pyrogram import Client, filters, errors
 from datetime import datetime
 
 # AFK status tracker
@@ -37,7 +37,7 @@ OWNER_ID = 6171681404  # Replace with the actual owner ID
 # Client instance of the bot
 app = Client('your_bot')
 
-@app.on_message(filters.me, group=2)
+@Client.on_message(filters.me, group=2)
 async def back_to_online(_, message):
     global AFK
     if AFK['afk']:
@@ -45,7 +45,7 @@ async def back_to_online(_, message):
         name = message.from_user.mention
         await message.reply(random.choice(say_welcome).format(name))
 
-@app.on_message(filters.me & filters.command('afk', prefixes=PREFIXES), group=1)
+@Client.on_message(filters.me & filters.command('afk', prefixes=PREFIXES), group=1)
 async def away_from_keyboard(_, message):
     global AFK
 
@@ -62,7 +62,7 @@ async def away_from_keyboard(_, message):
 
     await message.reply(random.choice(say_afk).format(mention))
 
-@app.on_message(filters.reply & ~filters.me & ~filters.bot, group=-1)
+@Client.on_message(filters.reply & ~filters.me & ~filters.bot, group=-1)
 async def afk_check(_, message):
     r = message.reply_to_message
     IS_AFK = AFK['afk']

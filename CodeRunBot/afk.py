@@ -1,4 +1,3 @@
- import unni
 import random
 from pyrogram import Client as app, filters, errors
 from datetime import datetime
@@ -31,7 +30,11 @@ async def get_anime_gif(key):
     # Example gif URL, replace this with actual logic
     return "https://example.com/sample_gif.gif"
 
-# Client instance of the bot (replace 'your_bot' with your actual app name)
+# Ensure 'PREFIXES' and 'OWNER_ID' are defined correctly
+PREFIXES = ['/', '.']  # Define your command prefixes here
+OWNER_ID = 6171681404  # Replace with the actual owner ID
+
+# Client instance of the bot
 app = Client('your_bot')
 
 @app.on_message(filters.me, group=2)
@@ -42,7 +45,7 @@ async def back_to_online(_, message):
         name = message.from_user.mention
         await message.reply(random.choice(say_welcome).format(name))
 
-@app.on_message(filters.me & filters.command('afk', prefixes=unni.PREFIXES), group=1)
+@app.on_message(filters.me & filters.command('afk', prefixes=PREFIXES), group=1)
 async def away_from_keyboard(_, message):
     global AFK
 
@@ -64,7 +67,7 @@ async def afk_check(_, message):
     r = message.reply_to_message
     IS_AFK = AFK['afk']
 
-    if r and IS_AFK and r.from_user.id == unni.OWNER_ID:
+    if r and IS_AFK and r.from_user.id == OWNER_ID:
         reason = AFK['reason']
         name = message.from_user.mention
         text = f'{name}, My master is offline.\n'

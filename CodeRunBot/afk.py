@@ -30,7 +30,7 @@ def get_datetime():
 # Function to get an anime gif (placeholder function, implement according to your needs)
 async def get_anime_gif(key):
     # Example gif URL, replace this with actual logic
-    return "https://example.com/sample_gif.gif"
+    return "https://mangandi-2-0.onrender.com/RIVl.MP4"
 
 # Ensure 'PREFIXES' and 'OWNER_ID' are defined correctly
 PREFIXES = ['/', '.']  # Define your command prefixes here

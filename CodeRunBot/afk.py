@@ -80,5 +80,4 @@ async def back_to_online(_, message):
         AFK['afk'] = False
         name = message.from_user.mention
         await message.reply(random.choice(say_welcome).format(name))
-
-app.run()
+        

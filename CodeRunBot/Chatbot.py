@@ -76,7 +76,7 @@ async def get_response(user_id: str, messages: list) -> str:
 # Pyrogram bot credentials
 api_id = "27408015"  # Replace with your API ID
 api_hash = "2f07e7c921c8d2b982df12d65a46ca46"  # Replace with your API Hash
-bot_token = "7424717855:AAHRlZuJY2PZ9qtD1U50zItMI_a9GHX9G_A" # Replace with your bot token
+bot_token = "7424717855:AAGzjRLuJLRNh0YoOhCRvDVI5kymDQfEvoA"  # Replace with your bot token
 
 # Initialize Pyrogram client
 app = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
@@ -132,7 +132,7 @@ async def chatbot_reply(client, message):
         user_id = id_generator()
         messages = [{"role": "user", "content": prompt}]
         response = await get_response(user_id, messages)
-        cleaned_response_text = response.replace('(smirking)', '')
+        cleaned_response_text = response.replace('$v=undefined-rv1$@$(smirking)', '')
         text = cleaned_response_text.strip()[2:]       
         await msg.edit_text(text)
 
@@ -166,4 +166,4 @@ async def chatbot_callback(client, query):
     else:
         return await query.answer(
             text='Callback data #404 no mod type 🤔', show_alert=True
-        )
+            )

@@ -35,6 +35,11 @@ chatbot_data = load_data()
 def id_generator() -> str:
     return str(uuid.uuid4())
 
+# Function to get an anime gif (placeholder function)
+async def get_anime_gif(key):
+    # Example gif URL, replace this with actual logic
+    return "https://mangandi-2-0.onrender.com/RIVl.MP4"
+
 # Function to get chatbot responses and store them in the JSON file
 async def get_response(user_id: str, messages: list) -> str:
     url = "https://www.blackbox.ai/api/chat"
@@ -132,13 +137,18 @@ async def chatbot_reply(client, message):
         user_id = id_generator()
         messages = [{"role": "user", "content": prompt}]
         response = await get_response(user_id, messages)
+
+        # Fetch an anime gif and send it along with the response
+        gif_url = await get_anime_gif("anime_gif_key")
+        
         cleaned_response_text = response.replace('$v=undefined-rv1$@$(smirking)', '')
         text = cleaned_response_text.strip()[2:]       
         await msg.edit_text(text)
+        await client.send_animation(chat_id=chat_id, animation=gif_url)
 
+# Handles enable/disable chatbot via inline keyboard
 @Client.on_callback_query(filters.regex(r"^chatbot"))
 async def chatbot_callback(client, query):
-    """Handles enable/disable chatbot via inline keyboard."""
     user_id = int(query.data.split(':')[2])
     mod = query.data.split(':')[1]
     chat_id = query.data.split(':')[3]  # Get chat_id from the callback data
@@ -166,4 +176,4 @@ async def chatbot_callback(client, query):
     else:
         return await query.answer(
             text='Callback data #404 no mod type 🤔', show_alert=True
-            )
+        )

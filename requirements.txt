@@ -3,3 +3,5 @@ tgcrypto
 requests
 aiohttp
 img2pdf
+asyncio
+python-telegram-bot

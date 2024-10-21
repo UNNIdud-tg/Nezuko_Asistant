@@ -1,179 +1,148 @@
-import json
-import os
-import uuid
-import logging
-from pyrogram import Client, filters, types, enums
-import aiohttp
-import asyncio
+# requirements.txt
+# >> python-telegram-bot
 
-# Path for JSON file
-DATA_FILE = "chatbot_data.json"
+"""
+This bot code was developed by https://t.meRXSUPPORTS, 
+By: @UNNIdud
+"""
+
+import asyncio
+import contextlib
+import logging
+import httpx
+import re
+import ast
+import uuid
+import json
+from typing import NoReturn
+from telegram import Bot, Update, constants
+from telegram.error import Forbidden, NetworkError
+
 
 # Logging setup for application-wide debugging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO
 )
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
-# Load existing data from the JSON file
-def load_data():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r') as file:
-            return json.load(file)
-    return {}
 
-# Save data to the JSON file
-def save_data(data):
-    with open(DATA_FILE, 'w') as file:
-        json.dump(data, file, indent=4)
+TOKEN = "7424717855:AAGzjRLuJLRNh0YoOhCRvDVI5kymDQfEvoA" # Replace with your bot token from @BotFather
+char_id = "NezukoKamado3SQbPzE" # AGENT-ID from https://blackbox.ai
+char_name = "Nezuko Kamado" # CHARACTER-NAME as same as you entered name for create Agent [Optional]
 
-# Initialize the chatbot data
-chatbot_data = load_data()
+async def BlackBoxChat(user_id: str, messages: list) -> dict:
+    """
+    Function to send user input to the BlackBox AI API and return AI-generated responses.
+    
+    Args:
+        user_id (str): A unique identifier for the user interacting with the bot.
+        messages (list): A list of dictionaries containing user prompts and messages.
 
-# Function to generate unique user IDs
-def id_generator() -> str:
-    return str(uuid.uuid4())
-
-# Function to get an anime gif (placeholder function)
-async def get_anime_gif(key):
-    # Example gif URL, replace this with actual logic
-    return "https://mangandi-2-0.onrender.com/RIVl.MP4"
-
-# Function to get chatbot responses and store them in the JSON file
-async def get_response(user_id: str, messages: list) -> str:
-    url = "https://www.blackbox.ai/api/chat"
-    headers = {
-        "accept": "application/json",
-        "Content-Type": "application/json"
-    }
+    Returns:
+        dict: A dictionary containing the AI-generated reply text.
+    """
     data = {
-        "messages": messages,  
+        "messages": messages,
         "user_id": user_id,
         "codeModelMode": True,
         "agentMode": {
             "mode": True,
-            "id": "NezukoKamado3SQbPzE",  # Agent ID
-            "name": "Nezuko Kamado"  # Character Name
+            "id": char_id,
+            "name": char_name
         },
         "trendingAgentMode": {}
     }
+    headers = {"Content-Type": "application/json"}
+    url = "https://www.blackbox.ai/api/chat"
 
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, json=data, headers=headers) as response:
-                if response.status == 200:
-                    response_text = await response.text()
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, headers=headers, json=data)
+            response_text = response.text
 
-                    # Store the response in chatbot_data and save to the JSON file
-                    chatbot_data[user_id] = messages[0]['content']  # Store the user message
-                    chatbot_data[f"{user_id}_response"] = response_text.strip()  # Store the bot response
-                    save_data(chatbot_data)
+            # Clean the response and extract relevant data if available
+            cleaned_response_text = re.sub(r'^\$@\$(.*)\$@\$', '', response_text)
+            aiText = cleaned_response_text.strip()
 
-                    return response_text.strip()
-                else:
-                    return "⚠️ Unable to get a response from the chatbot."
+            # Parse any data links if included in the response
+            if "$~~~$" in aiText:
+                data_links_match = re.search(r'\$~~~\$(.*?)\$~~~\$', aiText, flags=re.DOTALL)
+                if data_links_match:
+                    data_links = data_links_match.group(1)
+                    if ast.literal_eval(data_links):
+                        text = "\n"
+                        for data in json.loads(data_links):
+                            if (title := data.get('title')) and (link := data.get('link')):
+                                text += f"• [{title}]({link})\n\n"
+                        index = aiText.rfind("$~~~$")
+                        text += aiText[index + 5:]
+                        aiText = text
+
+            return {'reply': aiText}
 
     except Exception as e:
-        logger.error(f"Error in get_response: {str(e)}")
-        return f"❌ Something went wrong: {str(e)}"
+        logger.error(f"Error in BlackBoxChat: {str(e)}")
+        return {'reply': f'❌ Something went wrong: {str(e)}'}
 
-# Pyrogram bot credentials
-api_id = "27408015"  # Replace with your API ID
-api_hash = "2f07e7c921c8d2b982df12d65a46ca46"  # Replace with your API Hash
-bot_token = "7424717855:AAGzjRLuJLRNh0YoOhCRvDVI5kymDQfEvoA"  # Replace with your bot token
 
-# Initialize Pyrogram client
-app = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
+async def main() -> NoReturn:
+    """
+    The main function that continuously fetches updates from Telegram, processes incoming
+    messages, and interacts with the bot.
+    """
+   
+    async with Bot(TOKEN) as bot:
+        last_update_id = 0
 
-# Command to set the chatbot's behavior
-@Client.on_message(filters.command("chatbot"))
-async def chatbot_command(client, message):
-    chat_id = str(message.chat.id)  # Use chat_id to store enable/disable status
-    admin_ids = []
-    ok = False
+        logger.info("BOT STARTED TO LISTENING...")
+        while True:
+            try:
+                # Fetch updates from the bot
+                updates = await bot.get_updates(offset=last_update_id + 1)
 
-    if message.chat.type == enums.ChatType.PRIVATE:
-        ok = True
-    else:
-        async for mem in client.get_chat_members(
-            chat_id=message.chat.id, filter=enums.ChatMembersFilter.ADMINISTRATORS
-        ):
-            admin_ids.append(mem.user.id)
-        if message.from_user.id in admin_ids:
-            ok = True
+                if updates:
+                    for update in updates:
+                        # Process new updates
+                        if update.update_id != last_update_id:
+                            last_update_id = update.update_id
+                            if getattr(update.message, 'text', False):
+                                await chatbot(bot, update)
 
-    if not ok:
-        return await message.reply_text(
-            "Sorry, you're not authorized to do this. Only admins can!"
-        )
+                await asyncio.sleep(2.5)  # Control polling rate
 
-    return await message.reply_text(
-        text="⚡ Chat Bot Settings",
-        reply_markup=types.InlineKeyboardMarkup([[
-            types.InlineKeyboardButton(
-                text="🟢", callback_data=f"chatbot:enable:{message.from_user.id}:{chat_id}"
-            ),
-            types.InlineKeyboardButton(
-                text="🔴", callback_data=f"chatbot:disable:{message.from_user.id}:{chat_id}"
-            )
-        ]])
-    )
+            except (Forbidden, NetworkError) as e:
+                logger.error(f"Error occurred: {e}")
+                await asyncio.sleep(5)  # Retry delay on error
 
-# Check if chatbot is enabled before replying
-@Client.on_message(group=33)
-async def chatbot_reply(client, message):
-    chat_id = str(message.chat.id)
+
+async def chatbot(bot: Bot, update: Update):
+    """
+    Handles the processing of incoming messages and sends the response back to the user.
     
-    # Check if chatbot is enabled in the current chat
-    if chatbot_data.get(f"{chat_id}_status") != "enabled":
-        return  # Do nothing if chatbot is disabled
-
-    reply = message.reply_to_message
-    if reply and reply.from_user and reply.from_user.id == client.me.id:
-        prompt = message.text
-        await client.send_chat_action(chat_id, enums.ChatAction.TYPING)
-        msg = await message.reply_text("✨")     
-        user_id = id_generator()
-        messages = [{"role": "user", "content": prompt}]
-        response = await get_response(user_id, messages)
-
-        # Fetch an anime gif and send it along with the response
-        gif_url = await get_anime_gif("anime_gif_key")
-        
-        cleaned_response_text = response.replace('$v=undefined-rv1$@$(smirking)', '')
-        text = cleaned_response_text.strip()[2:]       
-        await msg.edit_text(text)
-        await client.send_animation(chat_id=chat_id, animation=gif_url)
-
-# Handles enable/disable chatbot via inline keyboard
-@Client.on_callback_query(filters.regex(r"^chatbot"))
-async def chatbot_callback(client, query):
-    user_id = int(query.data.split(':')[2])
-    mod = query.data.split(':')[1]
-    chat_id = query.data.split(':')[3]  # Get chat_id from the callback data
-    m = query.message
+    Args:
+        bot (Bot): The Telegram bot instance.
+        update (Update): The Telegram update containing the user's message.
+    """
+    # Send a temporary reply before processing the full response
+    msg = await update.message.reply_text("⚡", quote=True)
+    prompt = update.message.text
+    user = update.message.from_user
+    user_id = str(uuid.uuid4())
+    messages = [{"role": "user", "content": prompt}]
     
-    if query.from_user.id != user_id:
-        return await query.answer(
-            text="This is not requested by you ⚡", show_alert=True
-        )
+    # Get response from BlackBox AI
+    reply_text = (await BlackBoxChat(user_id, messages))['reply']
+    
+    try:
+        await msg.edit_text(reply_text, parse_mode=constants.ParseMode.MARKDOWN)
+        logger.info(f'👥 User {user.full_name} ({user.id}) asked: "{prompt}" at {update.message.date}')
+    
+    except Exception as e:
+        logger.error(f"Error occurred for prompt '{prompt}': {e}")
 
-    if mod == 'enable':
-        # Enable the chatbot for this chat
-        chatbot_data[f"{chat_id}_status"] = "enabled"
-        save_data(chatbot_data)
-        return await m.edit_text(
-            f"⚡ Chatbot successfully enabled 🟢 in {m.chat.title or m.chat.first_name} by {query.from_user.mention}"
-        )
-    elif mod == 'disable':
-        # Disable the chatbot for this chat
-        chatbot_data[f"{chat_id}_status"] = "disabled"
-        save_data(chatbot_data)
-        return await m.edit_text(
-            f"⚡ Chatbot successfully disabled 🔴 in {m.chat.title or m.chat.first_name} by {query.from_user.mention}"
-        )
-    else:
-        return await query.answer(
-            text='Callback data #404 no mod type 🤔', show_alert=True
-        )
+
+if __name__ == "__main__":
+    with contextlib.suppress(KeyboardInterrupt):  # Gracefully handle Ctrl-C exit
+        asyncio.run(main())

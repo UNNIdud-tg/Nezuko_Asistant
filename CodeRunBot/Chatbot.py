@@ -48,8 +48,8 @@ async def get_response(user_id: str, messages: list) -> str:
         "codeModelMode": True,
         "agentMode": {
             "mode": True,
-            "id": "NezukoKamado3SQbPzE",  # Agent ID
-            "name": "Nezuko Kamado"  # Character Name
+            "id": "NatashaLgQexEs",  # Agent ID
+            "name": "Natasha"  # Character Name
         },
         "trendingAgentMode": {}
     }
@@ -76,7 +76,7 @@ async def get_response(user_id: str, messages: list) -> str:
 # Pyrogram bot credentials
 api_id = "27408015"  # Replace with your API ID
 api_hash = "2f07e7c921c8d2b982df12d65a46ca46"  # Replace with your API Hash
-bot_token = "7424717855:AAGzjRLuJLRNh0YoOhCRvDVI5kymDQfEvoA"  # Replace with your bot token
+bot_token = "6235483959:AAGkutp90SCxO3RaJuhPC0CG99iDKxOStUY"  # Replace with your bot token
 
 # Initialize Pyrogram client
 app = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
@@ -166,4 +166,4 @@ async def chatbot_callback(client, query):
     else:
         return await query.answer(
             text='Callback data #404 no mod type 🤔', show_alert=True
-)
+        )
